@@ -2,32 +2,36 @@
 #include <fstream>
 #include <vector>
 using namespace std;
+// pixel struct
 struct Pixel
 {
     unsigned char r;
     unsigned char g;
     unsigned char b;
 };
+// image struct
 struct Image
 {
     int height;
     int width;
     vector<Pixel> pixels;
 };
+// reading ppm file
 Image readppm(string filename)
 {
     ifstream in;
+    Image img;
     string str;
     int h, w, max_value;
     in.open(filename);
     if (!in.is_open())
     {
         cout << "file not found!";
+        return img;//stop here
     }
     in >> str >> w >> h >> max_value;
     cout << "reading values!!" << endl;
     cout << str << " " << w << " " << h << " " << max_value << endl;
-    Image img;
     img.height = h;
     img.width = w;
     int r, g, b;
@@ -41,6 +45,35 @@ Image readppm(string filename)
     cout << img.pixels.size() << endl;
     in.close();
     return img;
+}
+// writing ppm file
+void writeppm(string filename, Image img)
+{
+    ofstream out;
+    out.open(filename);
+    out << "P3\n";
+    out << img.width << " " << img.height << "\n";
+    out << "255\n";
+    for (auto &p : img.pixels)
+    {
+        out << (int)p.r << " " << (int)p.g << " " << (int)p.b << "\n";
+    }
+    out.close();
+}
+//grayscale filter
+void grayscale(Image &img){
+    int gray;
+for(auto &p:img.pixels){
+    gray = 0.3*p.r + 0.59*p.g + 0.11*p.b;
+    p.r=p.g=p.b=gray;
+}
+}
+void invertimage(Image &img){
+    for(auto &p:img.pixels){
+        p.r=255-(int)p.r;
+        p.g=255-(int)p.g;
+        p.b=255-(int)p.b;
+    }
 }
 int main()
 {
@@ -56,8 +89,14 @@ int main()
     img.pixels.push_back(p4);
     for (auto &p : img.pixels)
     {
-        cout << "R:" << (int)p.r << " " << "G:" << (int)p.g << " " << "B:" << (int)p.b << endl;
+        cout << "R:" << (int)p.r << " " << "G:" << (int)p.g << " " << "B:" 
+        << (int)p.b << endl;
     }
     Image loaded = readppm("test.ppm");
     cout << loaded.height << " " << loaded.width;
+    //grayscale(loaded);
+    //writeppm("gray_output.ppm",loaded);
+    invertimage(loaded);
+    writeppm("invert_output.ppm",loaded);
+
 }
