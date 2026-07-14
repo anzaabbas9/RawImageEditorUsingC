@@ -108,31 +108,38 @@ void horizentleflip(Image &img){
 }
 int main()
 {
-    Pixel p1, p2, p3, p4;
-    p1 = {255, 0, 0};
-    p2 = {0, 255, 0};
-    p3 = {0, 0, 255};
-    p4 = {255, 0, 255};
-    Image img;
-    img.pixels.push_back(p1);
-    img.pixels.push_back(p2);
-    img.pixels.push_back(p3);
-    img.pixels.push_back(p4);
-    for (auto &p : img.pixels)
-    {
-        cout << "R:" << (int)p.r << " " << "G:" << (int)p.g << " " << "B:" 
-        << (int)p.b << endl;
+    int choice;
+    int value;
+    string filename;
+    string output_file;
+    cout<<"enter file name:";
+    cin>>filename;
+    Image loaded = readppm(filename);
+if (loaded.pixels.empty()) {
+    cout << "Could not load image, exiting.\n";
+    return 0;   // stop the whole program here
+}
+    cout << "1. Grayscale\n2. Invert\n3. Brightness\n4. Flip\nChoice: ";
+    cout<<"enter your choice:";
+    cin>>choice;
+    if(choice==1){
+        grayscale(loaded);
     }
-   // Image loaded = readppm("test.ppm");
-    //cout << loaded.height << " " << loaded.width;
-    //grayscale(loaded);
-    //writeppm("gray_output.ppm",loaded);
-    //invertimage(loaded);
-    //writeppm("invert_output.ppm",loaded);
-    //brightness(loaded,-100);
-    //writeppm("brightness_output.ppm",loaded);
-    Image flip_img=readppm("Flip_test.ppm");
-    horizentleflip(flip_img);
-    writeppm("Flip_output.ppm",flip_img);
-
+    else if(choice==2){
+        invertimage(loaded);
+    }
+    else if(choice==3){
+        cout<<"enter value:";
+        cin>>value;
+        brightness(loaded,value);
+    }
+    else if(choice==4){
+        horizentleflip(loaded);
+    }
+    else
+    cout<<"invalid choice!!";
+    cout<<"enter output file name:";
+    cin>>output_file;
+   writeppm(output_file,loaded);
+   return 0;
 }
